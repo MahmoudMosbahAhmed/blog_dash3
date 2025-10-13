@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blog Generator - Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-robot"></i>
+            <p>Loading Dashboard...</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content login-modal">
+            <div class="login-header">
+                <div style="position: absolute; top: 1rem; right: 1rem;">
+                    <button id="themeToggleLogin" class="btn btn-ghost" title="Toggle Dark Mode" style="padding: 0.5rem;">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <i class="fas fa-robot"></i>
+                <h2>AI Blog Generator</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-robot"></i>
+                <h3>AI Blog Generator</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="overview">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-section="content">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Content Management</span>
+                </a>
+                <a href="#" class="nav-item" data-section="create">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Create Content</span>
+                </a>
+                <a href="#" class="nav-item" data-section="brainstorm">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Brainstorm Ideas</span>
+                </a>
+                <a href="#" class="nav-item" data-section="bulk">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Bulk Generation</span>
+                </a>
+                <a href="#" class="nav-item" data-section="optimization">
+                    <i class="fas fa-search"></i>
+                    <span>SEO Tools</span>
+                </a>
+                <a href="#" class="nav-item" data-section="workflow">
+                    <i class="fas fa-tasks"></i>
+                    <span>Workflow</span>
+                </a>
+                <a href="#" class="nav-item" data-section="team">
+                    <i class="fas fa-users"></i>
+                    <span>Team</span>
+                </a>
+                <a href="#" class="nav-item" data-section="insights">
+                    <i class="fas fa-brain"></i>
+                    <span>AI Insights</span>
+                </a>
+
+                <a href="#" class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button id="sidebarToggle" class="btn btn-ghost">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Overview</h1>
+                </div>
+                <div class="header-center">
+                    <div class="global-search">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="globalSearch" placeholder="Search content, ideas, jobs..." autocomplete="off">
+                            <div class="search-results" id="searchResults" style="display: none;">
+                                <!-- Search results will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button id="themeToggle" class="btn btn-ghost" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button id="notificationsBtn" class="btn btn-ghost" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+                        </button>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="currentUser">Admin</span>
+                            <div class="user-dropdown">
+                                <button class="btn btn-ghost dropdown-toggle" id="userMenuToggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu" id="userDropdown">
+                                    <a href="#" class="dropdown-item">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="#" class="dropdown-item" onclick="navigation.switchSection('settings')">
+                                        <i class="fas fa-cog"></i> Settings
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item" id="logoutDropdown">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Overview Section -->
+                <section id="overview-section" class="content-section active">
+                    <!-- Welcome Header -->
+                    <div class="welcome-header">
+                        <div class="welcome-content">
+                            <h2>Welcome back, <span id="welcomeUser">Admin</span>! 👋</h2>
+                            <p>Here's what's happening with your content today</p>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="btn btn-primary" onclick="navigation.switchSection('create')">
+                                <i class="fas fa-plus"></i> Create Content
+                            </button>
+                            <button class="btn btn-secondary" onclick="navigation.switchSection('brainstorm')">
+                                <i class="fas fa-lightbulb"></i> Get Ideas
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalContent">0</h3>
+                                <p>Total Content</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator positive" id="contentTrend">
+                                        <i class="fas fa-arrow-up"></i> +12%
+                                    </span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="publishedContent">0</h3>
+                                <p>Published</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator positive" id="publishedTrend">
+                                        <i class="fas fa-arrow-up"></i> +8%
+                                    </span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="draftContent">0</h3>
+                                <p>Drafts</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator neutral" id="draftTrend">
+                                        <i class="fas fa-minus"></i> 0%
+                                    </span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="aiGenerated">0</h3>
+                                <p>AI Generated</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator positive" id="aiTrend">
+                                        <i class="fas fa-arrow-up"></i> +25%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card purple">
+                            <div class="stat-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="bulkJobs">0</h3>
+                                <p>Bulk Jobs</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator positive" id="bulkTrend">
+                                        <i class="fas fa-arrow-up"></i> +5%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card teal">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="avgQuality">0</h3>
+                                <p>Avg Quality Score</p>
+                                <div class="stat-trend">
+                                    <span class="trend-indicator positive" id="qualityTrend">
+                                        <i class="fas fa-arrow-up"></i> +3%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Analytics -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-area"></i> Content Creation Trend</h3>
+                                <div class="chart-controls">
+                                    <select id="chartPeriod" onchange="dashboard.updateCharts()">
+                                        <option value="7">Last 7 days</option>
+                                        <option value="30" selected>Last 30 days</option>
+                                        <option value="90">Last 90 days</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="contentChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-pie-chart"></i> Content by Category</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="categoryChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity & Quick Stats -->
+                    <div class="activity-grid">
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                                <button class="btn btn-sm btn-ghost" onclick="dashboard.loadRecentActivity()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                            <div class="activity-list" id="recentActivity">
+                                <!-- Activity items will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="quick-stats-card">
+                            <div class="quick-stats-header">
+                                <h3><i class="fas fa-tachometer-alt"></i> Performance Metrics</h3>
+                            </div>
+                            <div class="quick-stats-list">
+                                <div class="quick-stat">
+                                    <span class="stat-label">Avg Words per Article</span>
+                                    <span class="stat-value" id="avgWords">0</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <span class="stat-label">Content This Week</span>
+                                    <span class="stat-value" id="weeklyContent">0</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <span class="stat-label">Most Active Category</span>
+                                    <span class="stat-value" id="topCategory">-</span>
+                                </div>
+                                <div class="quick-stat">
+                                    <span class="stat-label">Generation Success Rate</span>
+                                    <span class="stat-value" id="successRate">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Recent Activity</h3>
+                            <div id="activityList" class="activity-list">
+                                <!-- Activity items will be populated here -->
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Content by Category</h3>
+                            <div id="categoryChart" class="chart-placeholder">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>Loading chart...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Content Management Section -->
+                <section id="content-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Content Management</h2>
+                        <div class="section-actions">
+                            <div class="filter-group">
+                                <label for="searchContent" class="sr-only">Search content</label>
+                                <input type="text" id="searchContent" placeholder="Search title, category, or keywords..." class="search-input" aria-label="Search content">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filterStatus" class="sr-only">Filter by status</label>
+                                <select id="filterStatus" class="filter-select" aria-label="Filter by status">
+                                <option value="">All Status</option>
+                                <option value="draft">Draft</option>
+                                    <option value="generating">Generating</option>
+                                    <option value="generated">Generated</option>
+                                    <option value="qc_pending">QC Pending</option>
+                                <option value="qc_passed">QC Passed</option>
+                                    <option value="qc_failed">QC Failed</option>
+                                    <option value="failed">Failed</option>
+                                    <option value="reviewed">Reviewed</option>
+                                    <option value="published">Published</option>
+                                    <option value="archived">Archived</option>
+                            </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filterCategory" class="sr-only">Filter by category</label>
+                                <select id="filterCategory" class="filter-select" aria-label="Filter by category">
+                                    <option value="">All Categories</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filterContentType" class="sr-only">Filter by content type</label>
+                                <select id="filterContentType" class="filter-select" aria-label="Filter by content type" onchange="dashboard.loadContent()">
+                                    <option value="">All Types</option>
+                                    <option value="article">Article</option>
+                                    <option value="blog_post">Blog Post</option>
+                                    <option value="course_review">Course Review</option>
+                                    <option value="guide">Guide</option>
+                                    <option value="tutorial">Tutorial</option>
+                                    <option value="how_to">How To</option>
+                                    <option value="listicle">Listicle</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filterAuthor" class="sr-only">Filter by author</label>
+                                <input type="text" id="filterAuthor" class="filter-input" placeholder="Filter by author..." onchange="dashboard.loadContent()" aria-label="Filter by author">
+                            </div>
+                            <div class="filter-group">
+                                <label for="sortBy" class="sr-only">Sort content</label>
+                                <select id="sortBy" class="filter-select" aria-label="Sort content">
+                                    <option value="updated_at">Sort by Updated</option>
+                                    <option value="created_at">Sort by Created</option>
+                                    <option value="title">Sort by Title</option>
+                                    <option value="word_count">Sort by Word Count</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="itemsPerPage" class="sr-only">Items per page</label>
+                                <select id="itemsPerPage" class="filter-select" aria-label="Items per page">
+                                    <option value="10">10 per page</option>
+                                    <option value="25" selected>25 per page</option>
+                                    <option value="50">50 per page</option>
+                                    <option value="100">100 per page</option>
+                                </select>
+                            </div>
+                            <button id="refreshContent" class="btn btn-secondary" aria-label="Refresh content list">
+                                <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                <span class="btn-text">Refresh</span>
+                            </button>
+                            <button id="testConnection" class="btn btn-info" aria-label="Test API connection">
+                                <i class="fas fa-wifi" aria-hidden="true"></i>
+                                <span class="btn-text">Test API</span>
+                            </button>
+                            <button id="apiStatus" class="btn btn-secondary" aria-label="View API status dashboard">
+                                <i class="fas fa-server" aria-hidden="true"></i>
+                                <span class="btn-text">API Status</span>
+                            </button>
+                            <button id="testModal" class="btn btn-warning" aria-label="Test Modal">
+                                <i class="fas fa-window-restore" aria-hidden="true"></i>
+                                <span class="btn-text">Test Modal</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Bulk Actions Bar -->
+                    <div class="bulk-actions-bar" id="bulkActionsBar" style="display: none;" role="toolbar" aria-label="Bulk actions">
+                        <div class="bulk-actions-left">
+                            <span id="selectedCount" aria-live="polite">0 items selected</span>
+                        </div>
+                        <div class="bulk-actions-right">
+                            <label for="bulkStatusSelect" class="sr-only">Change status for selected items</label>
+                            <select id="bulkStatusSelect" class="filter-select" aria-label="Change status for selected items">
+                                <option value="">Change Status...</option>
+                                <option value="draft">Set to Draft</option>
+                                <option value="reviewed">Set to Reviewed</option>
+                                <option value="published">Publish</option>
+                                <option value="archived">Archive</option>
+                            </select>
+                            <button id="bulkApplyStatus" class="btn btn-sm btn-primary" aria-label="Apply status change to selected items">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                                <span class="btn-text">Apply</span>
+                            </button>
+                            <button id="bulkDelete" class="btn btn-sm btn-danger" aria-label="Delete selected items">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                <span class="btn-text">Delete</span>
+                            </button>
+                            <button id="clearSelection" class="btn btn-sm btn-secondary" aria-label="Clear selection">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                                <span class="btn-text">Clear</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="content-table-wrapper">
+                        <table id="contentTable" class="content-table" role="table" aria-label="Content management table">
+                            <thead>
+                                <tr role="row">
+                                    <th scope="col" aria-label="Select all items">
+                                        <input type="checkbox" id="selectAll" onchange="dashboard.toggleSelectAll(this)" aria-label="Select all items">
+                                    </th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Updated</th>
+                                    <th scope="col">Words</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Content rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button id="prevPage" class="btn btn-secondary">Previous</button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button id="nextPage" class="btn btn-secondary">Next</button>
+                    </div>
+                </section>
+
+                <!-- Content Editor Modal -->
+                <div id="contentEditorModal" class="modal">
+                    <div class="modal-content editor-modal">
+                        <div class="modal-header">
+                            <h2><i class="fas fa-edit"></i> Edit Content</h2>
+                            <span class="modal-close" onclick="contentEditor.close()">&times;</span>
+                        </div>
+                        <div class="modal-body editor-body">
+                            <form id="contentEditorForm" class="editor-form">
+                                <div class="editor-tabs">
+                                    <button type="button" class="tab-btn active" onclick="contentEditor.switchTab('content')">
+                                        <i class="fas fa-file-alt"></i> Content
+                                    </button>
+                                    <button type="button" class="tab-btn" onclick="contentEditor.switchTab('meta')">
+                                        <i class="fas fa-tags"></i> Meta Data
+                                    </button>
+                                    <button type="button" class="tab-btn" onclick="contentEditor.switchTab('seo')">
+                                        <i class="fas fa-search"></i> SEO
+                                    </button>
+                                    <button type="button" class="tab-btn" onclick="contentEditor.switchTab('preview')">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </button>
+                                </div>
+
+                                <!-- Content Tab -->
+                                <div id="editor-content" class="editor-tab active">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="editTitle">Title</label>
+                                            <input type="text" id="editTitle" name="title" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editCategory">Category</label>
+                                            <select id="editCategory" name="category" required>
+                                                <option value="">Select Category</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editContent">Main Content</label>
+                                        <div class="editor-toolbar">
+                                            <button type="button" onclick="contentEditor.formatText('bold')" title="Bold">
+                                                <i class="fas fa-bold"></i>
+                                            </button>
+                                            <button type="button" onclick="contentEditor.formatText('italic')" title="Italic">
+                                                <i class="fas fa-italic"></i>
+                                            </button>
+                                            <button type="button" onclick="contentEditor.formatText('underline')" title="Underline">
+                                                <i class="fas fa-underline"></i>
+                                            </button>
+                                            <div class="toolbar-separator"></div>
+                                            <button type="button" onclick="contentEditor.formatText('insertUnorderedList')" title="Bullet List">
+                                                <i class="fas fa-list-ul"></i>
+                                            </button>
+                                            <button type="button" onclick="contentEditor.formatText('insertOrderedList')" title="Numbered List">
+                                                <i class="fas fa-list-ol"></i>
+                                            </button>
+                                            <div class="toolbar-separator"></div>
+                                            <button type="button" onclick="contentEditor.insertLink()" title="Insert Link">
+                                                <i class="fas fa-link"></i>
+                                            </button>
+                                            <button type="button" onclick="contentEditor.insertImage()" title="Insert Image">
+                                                <i class="fas fa-image"></i>
+                                            </button>
+                                        </div>
+                                        <div id="editContent" class="rich-editor" contenteditable="true" placeholder="Start writing your content..."></div>
+                                    </div>
+                                </div>
+
+                                <!-- Meta Data Tab -->
+                                <div id="editor-meta" class="editor-tab">
+                                    <div class="form-group">
+                                        <label for="editMetaDescription">Meta Description</label>
+                                        <textarea id="editMetaDescription" name="meta_description" rows="3" maxlength="160" placeholder="Brief description for search engines (max 160 characters)"></textarea>
+                                        <small class="char-count">0/160 characters</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editTldr">TL;DR Summary</label>
+                                        <textarea id="editTldr" name="tldr_summary" rows="2" placeholder="Quick summary of the content"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="editImageUrl">Featured Image URL</label>
+                                            <input type="url" id="editImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editImageAlt">Image Alt Text</label>
+                                            <input type="text" id="editImageAlt" name="image_alt_text" placeholder="Descriptive text for the image">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editAuthor">Author</label>
+                                        <input type="text" id="editAuthor" name="created_by" placeholder="Content author name">
+                                    </div>
+                                </div>
+
+                                <!-- SEO Tab -->
+                                <div id="editor-seo" class="editor-tab">
+                                    <div class="seo-score-section" id="seoScoreSection" style="display: none;">
+                                        <div class="seo-score-card">
+                                            <div class="seo-score-header">
+                                                <h3>SEO Analysis</h3>
+                                                <div class="seo-score-badge" id="seoScoreBadge">--/100</div>
+                                            </div>
+                                            <div class="seo-checklist" id="seoChecklist">
+                                                <!-- SEO checklist items will be populated by JavaScript -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editKeywords">Keywords</label>
+                                        <input type="text" id="editKeywords" name="keywords" placeholder="keyword1, keyword2, keyword3">
+                                        <small>Separate keywords with commas. First keyword is the primary keyword.</small>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="editMetaDescription">Meta Description</label>
+                                            <textarea id="editMetaDescription" name="meta_description" placeholder="SEO meta description (150-160 characters)" maxlength="160" rows="3"></textarea>
+                                            <small><span id="metaDescLength">0</span>/160 characters</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="editContentType">Content Type</label>
+                                            <select id="editContentType" name="content_type">
+                                                <option value="article">Article</option>
+                                                <option value="blog_post">Blog Post</option>
+                                                <option value="course_review">Course Review</option>
+                                                <option value="guide">Guide</option>
+                                                <option value="tutorial">Tutorial</option>
+                                                <option value="how_to">How To</option>
+                                                <option value="listicle">Listicle</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editStatus">Status</label>
+                                            <select id="editStatus" name="status">
+                                                <option value="draft">Draft</option>
+                                                <option value="reviewed">Reviewed</option>
+                                                <option value="published">Published</option>
+                                                <option value="archived">Archived</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="editImageAlt">Image Alt Text</label>
+                                        <input type="text" id="editImageAlt" name="image_alt_text" placeholder="Descriptive alt text for the main image">
+                                        <small>Include your primary keyword naturally in the alt text</small>
+                                    </div>
+                                </div>
+
+                                <!-- Preview Tab -->
+                                <div id="editor-preview" class="editor-tab">
+                                    <div class="preview-container">
+                                        <div class="preview-header">
+                                            <h1 id="previewTitle">Content Title</h1>
+                                            <div class="preview-meta">
+                                                <span id="previewCategory">Category</span>
+                                                <span id="previewDate"></span>
+                                                <span id="previewWordCount">0 words</span>
+                                            </div>
+                                        </div>
+                                        <div id="previewImage" class="preview-image" style="display: none;">
+                                            <img id="previewImageSrc" alt="">
+                                        </div>
+                                        <div id="previewContent" class="preview-content">
+                                            Content preview will appear here...
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="editor-actions">
+                                    <button type="button" class="btn btn-secondary" onclick="contentEditor.close()">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="button" class="btn btn-info" onclick="contentEditor.saveAsDraft()">
+                                        <i class="fas fa-save"></i> Save as Draft
+                                    </button>
+                                    <button type="button" class="btn btn-success" onclick="contentEditor.saveAndPublish()">
+                                        <i class="fas fa-globe"></i> Save & Publish
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Content Section -->
+                <section id="create-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Create New Content</h2>
+                    </div>
+                    <div class="create-tabs">
+                        <button class="tab-btn active" data-tab="ai">
+                            <i class="fas fa-robot"></i>
+                            AI Generated
+                        </button>
+                        <button class="tab-btn" data-tab="manual">
+                            <i class="fas fa-edit"></i>
+                            Manual Entry
+                        </button>
+                        <button class="tab-btn" data-tab="eeat">
+                            <i class="fas fa-star"></i>
+                            E-E-A-T Enhanced
+                        </button>
+                    </div>
+
+                    <!-- AI Content Creation -->
+                    <div id="ai-tab" class="tab-content active">
+                        <form id="aiContentForm" class="content-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aiTitle">Content Title</label>
+                                    <input type="text" id="aiTitle" name="title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="aiCategory">Category</label>
+                                    <input type="text" id="aiCategory" name="category" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aiContentType">Content Type</label>
+                                    <select id="aiContentType" name="content_type" required>
+                                        <option value="article" selected>Article</option>
+                                        <option value="blog_post">Blog Post</option>
+                                        <option value="course_review">Course Review</option>
+                                        <option value="guide">Guide</option>
+                                        <option value="tutorial">Tutorial</option>
+                                        <option value="how_to">How To</option>
+                                        <option value="listicle">Listicle</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="aiSearchIntent">Search Intent</label>
+                                    <select id="aiSearchIntent" name="search_intent" required>
+                                        <option value="informational">Informational</option>
+                                        <option value="commercial">Commercial</option>
+                                        <option value="navigational">Navigational</option>
+                                        <option value="transactional">Transactional</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="aiKeywords">Keywords (comma-separated)</label>
+                                <input type="text" id="aiKeywords" name="keywords" required>
+                            </div>
+                            
+                            <!-- Advanced Content Parameters -->
+                            <div class="advanced-parameters">
+                                <h4><i class="fas fa-cog"></i> Advanced Content Parameters</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="aiTargetAudience">Target Audience</label>
+                                        <select id="aiTargetAudience" name="target_audience">
+                                            <option value="general">General Audience</option>
+                                            <option value="beginners">Beginners</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="experts">Experts</option>
+                                            <option value="decision_makers">Decision Makers</option>
+                                            <option value="technical_teams">Technical Teams</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="aiBrandVoice">Brand Voice</label>
+                                        <select id="aiBrandVoice" name="brand_voice">
+                                            <option value="professional">Professional</option>
+                                            <option value="conversational">Conversational</option>
+                                            <option value="authoritative">Authoritative</option>
+                                            <option value="friendly">Friendly</option>
+                                            <option value="technical">Technical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="aiCompetitorInsights">Competitor Analysis (optional)</label>
+                                    <textarea id="aiCompetitorInsights" name="competitor_insights" rows="2" placeholder="Key insights about competitor content or market gaps..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="aiGuidance">Content Guidance (optional)</label>
+                                <textarea id="aiGuidance" name="guidance" rows="3" placeholder="Provide specific instructions for the AI..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aiImageUrl">Featured Image URL (optional)</label>
+                                    <input type="url" id="aiImageUrl" name="image_url" placeholder="https://example.com/image.jpg">
+                                </div>
+                                <div class="form-group">
+                                    <label for="aiImageAlt">Image Alt Text (optional)</label>
+                                    <input type="text" id="aiImageAlt" name="image_alt_text" placeholder="Descriptive text for the image">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aiTargetLength">Target Length</label>
+                                    <select id="aiTargetLength" name="target_length">
+                                        <option value="short">Short (1000-1300 words)</option>
+                                        <option value="medium" selected>Medium (1500-2000 words)</option>
+                                        <option value="long">Long (2500-3200 words)</option>
+                                        <option value="comprehensive">Comprehensive (3500-4500 words)</option>
+                                        <option value="extended">Extended (5000+ words)</option>
+                                    </select>
+                                </div>
+                                                            <div class="form-group">
+                                <label for="aiCourseUrl">Course URL (optional)</label>
+                                <input type="url" id="aiCourseUrl" name="course_url">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="aiImageUrl">Custom Image URL (optional)</label>
+                                <input type="url" id="aiImageUrl" name="image_url" placeholder="Leave empty to auto-generate image">
+                            </div>
+                            <div class="form-group">
+                                <label for="aiImageAlt">Image Alt Text (optional)</label>
+                                <input type="text" id="aiImageAlt" name="image_alt_text" placeholder="Descriptive text for the image">
+                            </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-robot"></i>
+                                Generate Content with AI
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- E-E-A-T Content Creation -->
+                    <div id="eeat-tab" class="tab-content">
+                        <div class="eeat-intro">
+                            <h3><i class="fas fa-star"></i> E-E-A-T Enhanced Content Generation</h3>
+                            <p>Generate high-quality content following Google's E-E-A-T principles with advanced quality control and uniqueness filtering.</p>
+                        </div>
+                        
+                        <form id="eeatCreateForm" class="content-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eeatCreateTitle">Content Title *</label>
+                                    <input type="text" id="eeatCreateTitle" name="title" required placeholder="Enter article title">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eeatCreateCategory">Category *</label>
+                                    <select id="eeatCreateCategory" name="category" required>
+                                        <option value="">Select category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eeatCreateContentType">Content Type</label>
+                                    <select id="eeatCreateContentType" name="content_type">
+                                        <option value="article" selected>Article</option>
+                                        <option value="blog_post">Blog Post</option>
+                                        <option value="course_review">Course Review</option>
+                                        <option value="guide">Guide</option>
+                                        <option value="tutorial">Tutorial</option>
+                                        <option value="how_to">How To</option>
+                                        <option value="listicle">Listicle</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eeatCreateSearchIntent">Search Intent</label>
+                                    <select id="eeatCreateSearchIntent" name="search_intent">
+                                        <option value="informational">Informational</option>
+                                        <option value="navigational">Navigational</option>
+                                        <option value="transactional">Transactional</option>
+                                        <option value="commercial">Commercial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="eeatCreateKeywords">Keywords (comma-separated) *</label>
+                                <input type="text" id="eeatCreateKeywords" name="keywords" required placeholder="keyword1, keyword2, keyword3">
+                            </div>
+                            
+                            <!-- Advanced E-E-A-T Parameters -->
+                            <div class="advanced-parameters">
+                                <h4><i class="fas fa-cog"></i> Advanced E-E-A-T Parameters</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="eeatCreateTargetAudience">Target Audience</label>
+                                        <select id="eeatCreateTargetAudience" name="target_audience">
+                                            <option value="general">General Audience</option>
+                                            <option value="beginners">Beginners</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="experts">Experts</option>
+                                            <option value="decision_makers">Decision Makers</option>
+                                            <option value="technical_teams">Technical Teams</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eeatCreateBrandVoice">Brand Voice</label>
+                                        <select id="eeatCreateBrandVoice" name="brand_voice">
+                                            <option value="professional">Professional</option>
+                                            <option value="conversational">Conversational</option>
+                                            <option value="authoritative">Authoritative</option>
+                                            <option value="friendly">Friendly</option>
+                                            <option value="technical">Technical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eeatCreateCompetitorInsights">Competitor Analysis (optional)</label>
+                                    <textarea id="eeatCreateCompetitorInsights" name="competitor_insights" rows="2" placeholder="Key insights about competitor content or market gaps..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="eeatCreateGuidance">Content Guidance (optional)</label>
+                                <textarea id="eeatCreateGuidance" name="guidance" placeholder="Provide specific instructions for the AI..."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eeatCreateTargetLength">Target Length</label>
+                                    <select id="eeatCreateTargetLength" name="target_length">
+                                        <option value="1000">Short (1000-1300 words)</option>
+                                        <option value="1500" selected>Medium (1500-2000 words)</option>
+                                        <option value="2500">Long (2500-3200 words)</option>
+                                        <option value="3500">Very Long (3500-4500 words)</option>
+                                        <option value="5000">Extended (5000+ words)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eeatCreateCourseUrl">Course URL (optional)</label>
+                                    <input type="url" id="eeatCreateCourseUrl" name="course_url" placeholder="https://example.com/course">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eeatCreateImageUrl">Custom Image URL (optional)</label>
+                                    <input type="url" id="eeatCreateImageUrl" name="image_url" placeholder="Leave empty to auto-generate image">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eeatCreateImageAlt">Image Alt Text (optional)</label>
+                                    <input type="text" id="eeatCreateImageAlt" name="image_alt_text" placeholder="Descriptive text for the image">
+                                </div>
+                            </div>
+                            
+                            <!-- E-E-A-T Advanced Options -->
+                            <div class="eeat-advanced-options">
+                                <h4><i class="fas fa-cog"></i> Advanced E-E-A-T Options</h4>
+                                <div class="form-row">
+                                    <div class="form-group checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="eeatCreateDetailedContent" name="detailed_content">
+                                            <span class="checkmark"></span>
+                                            Generate detailed content with examples (+30% length)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-star"></i>
+                                    Generate E-E-A-T Content
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="eeatCreate.clearForm()">
+                                    <i class="fas fa-eraser"></i>
+                                    Clear Form
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="eeatCreateResults" class="eeat-results" style="display: none;">
+                            <div class="results-header">
+                                <h3>E-E-A-T Generation Results</h3>
+                            </div>
+                            <div id="eeatCreateQualityScores" class="quality-scores"></div>
+                            <div id="eeatCreateContentPreview" class="content-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Content Creation -->
+                    <div id="manual-tab" class="tab-content">
+                        <form id="manualContentForm" class="content-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="manualTitle">Content Title</label>
+                                    <input type="text" id="manualTitle" name="title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualCategory">Category</label>
+                                    <input type="text" id="manualCategory" name="category" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="manualContentType">Content Type</label>
+                                    <select id="manualContentType" name="content_type" required>
+                                        <option value="article" selected>Article</option>
+                                        <option value="blog_post">Blog Post</option>
+                                        <option value="course_review">Course Review</option>
+                                        <option value="guide">Guide</option>
+                                        <option value="tutorial">Tutorial</option>
+                                        <option value="how_to">How To</option>
+                                        <option value="listicle">Listicle</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualStatus">Initial Status</label>
+                                    <select id="manualStatus" name="status">
+                                        <option value="draft" selected>Draft</option>
+                                        <option value="reviewed">Reviewed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="manualTargetLength">Target Length</label>
+                                    <select id="manualTargetLength" name="target_length">
+                                        <option value="short">Short (1000-1300 words)</option>
+                                        <option value="medium" selected>Medium (1500-2000 words)</option>
+                                        <option value="long">Long (2500-3200 words)</option>
+                                        <option value="comprehensive">Comprehensive (3500-4500 words)</option>
+                                        <option value="extended">Extended (5000+ words)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualKeywords">Keywords (comma-separated, optional)</label>
+                                    <input type="text" id="manualKeywords" name="keywords" placeholder="keyword1, keyword2, keyword3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="manualContent">Content (HTML)</label>
+                                <textarea id="manualContent" name="content" rows="15" required placeholder="Enter your HTML content here..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="manualAuthor">Author Name</label>
+                                    <input type="text" id="manualAuthor" name="author_name" value="Upscend Team">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualBio">Author Bio</label>
+                                    <input type="text" id="manualBio" name="author_bio" value="The Upscend Team provides actionable insights on technology and business strategy.">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="manualImageUrl">Featured Image URL (optional)</label>
+                                    <input type="url" id="manualImageUrl" name="image_url" placeholder="URL of the featured image">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualImageAlt">Image Alt Text (optional)</label>
+                                    <input type="text" id="manualImageAlt" name="image_alt_text" placeholder="Descriptive text for the image">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Create Manual Content
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Brainstorm Section -->
+                <section id="brainstorm-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Brainstorm Article Ideas</h2>
+                    </div>
+                    <form id="brainstormForm" class="content-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="brainstormTopic">Topic/Industry</label>
+                                <input type="text" id="brainstormTopic" name="topic" required placeholder="e.g., Digital Marketing, AI Technology, Health & Wellness">
+                            </div>
+                            <div class="form-group">
+                                <label for="brainstormCategory">Category</label>
+                                <div class="category-input-group">
+                                    <div class="category-search-container">
+                                        <input type="text" id="categorySearch" placeholder="Search or enter new category..." 
+                                               oninput="brainstorm.filterCategories(this.value)" 
+                                               onfocus="brainstorm.showCategoryDropdown()" 
+                                               onblur="brainstorm.hideCategoryDropdown()" />
+                                        <div id="categoryDropdown" class="category-dropdown" style="display: none;">
+                                            <!-- Dynamic categories will be loaded here -->
+                                        </div>
+                                    </div>
+                                    <select id="brainstormCategory" name="category" style="display: none;">
+                                        <option value="">Loading categories...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="brainstormCount">Number of Ideas</label>
+                                <select id="brainstormCount" name="num_articles">
+                                    <option value="3">3 Ideas</option>
+                                    <option value="5" selected>5 Ideas</option>
+                                    <option value="10">10 Ideas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="brainstormContentType">Content Type</label>
+                                <select id="brainstormContentType" name="content_type">
+                                    <option value="article" selected>Article</option>
+                                    <option value="blog_post">Blog Post</option>
+                                    <option value="course_review">Course Review</option>
+                                    <option value="guide">Guide</option>
+                                    <option value="tutorial">Tutorial</option>
+                                    <option value="how_to">How To</option>
+                                    <option value="listicle">Listicle</option>
+                                </select>
+                                <small style="display: block; margin-top: 0.5rem; color: var(--text-secondary);">
+                                    <i class="fas fa-info-circle"></i> AI will intelligently determine appropriate length for each article
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Parameters (matching other forms) -->
+                        <div class="advanced-parameters">
+                            <h4><i class="fas fa-cog"></i> Advanced Content Parameters</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="brainstormTargetAudience">Target Audience</label>
+                                    <select id="brainstormTargetAudience" name="target_audience">
+                                        <option value="general">General Audience</option>
+                                        <option value="beginners">Beginners</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="experts">Experts</option>
+                                        <option value="decision_makers">Decision Makers</option>
+                                        <option value="technical_teams">Technical Teams</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="brainstormBrandVoice">Brand Voice</label>
+                                    <select id="brainstormBrandVoice" name="brand_voice">
+                                        <option value="professional">Professional</option>
+                                        <option value="conversational">Conversational</option>
+                                        <option value="authoritative">Authoritative</option>
+                                        <option value="friendly">Friendly</option>
+                                        <option value="technical">Technical</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="brainstormCompetitorInsights">Competitor Analysis (optional)</label>
+                                <textarea id="brainstormCompetitorInsights" name="competitor_insights" rows="2" placeholder="Key insights about competitor content or market gaps..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-lightbulb"></i>
+                            Generate Ideas
+                        </button>
+                    </form>
+                    <div id="brainstormResults" class="brainstorm-results">
+                        <!-- Results will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Bulk Generation Section -->
+                <section id="bulk-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Bulk Content Generation</h2>
+                        <p>Generate multiple articles at once with advanced workflow management</p>
+                    </div>
+
+                    <!-- Bulk Generation Tabs -->
+                    <div class="bulk-tabs">
+                        <button class="bulk-tab active" onclick="bulk.switchTab('interactive')">
+                            <i class="fas fa-tasks"></i>
+                            Interactive Pipeline
+                        </button>
+                        <button class="bulk-tab" onclick="bulk.switchTab('direct')">
+                            <i class="fas fa-bolt"></i>
+                            Direct Generation
+                        </button>
+                        <button class="bulk-tab" onclick="bulk.switchTab('jobs')">
+                            <i class="fas fa-list"></i>
+                            Job Management
+                        </button>
+                    </div>
+
+                    <!-- Interactive Pipeline Tab -->
+                    <div id="bulk-interactive" class="bulk-tab-content active">
+                        <div class="pipeline-steps">
+                            <div class="step-indicator">
+                                <div class="step active" data-step="1">
+                                    <div class="step-number">1</div>
+                                    <div class="step-title">Brainstorm</div>
+                                </div>
+                                <div class="step" data-step="2">
+                                    <div class="step-number">2</div>
+                                    <div class="step-title">Review</div>
+                                </div>
+                                <div class="step" data-step="3">
+                                    <div class="step-number">3</div>
+                                    <div class="step-title">Generate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Brainstorm -->
+                        <div id="step-1" class="pipeline-step active">
+                            <form id="bulkBrainstormForm" class="content-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="bulkTopic">Topic/Industry</label>
+                                        <input type="text" id="bulkTopic" name="topic" required placeholder="e.g., Digital Marketing Trends 2024">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bulkCategory">Category</label>
+                                        <div class="category-input-group">
+                                            <div class="category-search-container">
+                                                <input type="text" id="bulkCategorySearch" placeholder="Search or enter new category..." 
+                                                       oninput="bulk.filterCategories(this.value)" 
+                                                       onfocus="bulk.showCategoryDropdown()" 
+                                                       onblur="bulk.hideCategoryDropdown()" />
+                                                <div id="bulkCategoryDropdown" class="category-dropdown" style="display: none;">
+                                                    <!-- Dynamic categories will be loaded here -->
+                                                </div>
+                                            </div>
+                                            <select id="bulkCategorySelect" name="category" style="display: none;">
+                                                <option value="">Loading categories...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bulkCount">Number of Articles</label>
+                                        <select id="bulkCount" name="num_articles">
+                                            <option value="3">3 Articles</option>
+                                            <option value="5" selected>5 Articles</option>
+                                            <option value="10">10 Articles</option>
+                                            <option value="15">15 Articles</option>
+                                            <option value="20">20 Articles</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="bulkTargetLength">Target Length per Article</label>
+                                        <select id="bulkTargetLength" name="target_length">
+                                            <option value="short">Short (1000-1300 words)</option>
+                                            <option value="medium" selected>Medium (1500-2000 words)</option>
+                                            <option value="long">Long (2500-3200 words)</option>
+                                            <option value="comprehensive">Comprehensive (3500-4500 words)</option>
+                                            <option value="extended">Extended (5000+ words)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bulkContentType">Content Type</label>
+                                        <select id="bulkContentType" name="content_type">
+                                            <option value="article" selected>Article</option>
+                                            <option value="blog_post">Blog Post</option>
+                                            <option value="course_review">Course Review</option>
+                                            <option value="guide">Guide</option>
+                                            <option value="tutorial">Tutorial</option>
+                                            <option value="how_to">How To</option>
+                                            <option value="listicle">Listicle</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Advanced Parameters (matching AI Generated & E-E-A-T forms) -->
+                                <div class="advanced-parameters">
+                                    <h4><i class="fas fa-cog"></i> Advanced Content Parameters</h4>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="bulkTargetAudience">Target Audience</label>
+                                            <select id="bulkTargetAudience" name="target_audience">
+                                                <option value="general">General Audience</option>
+                                                <option value="beginners">Beginners</option>
+                                                <option value="intermediate">Intermediate</option>
+                                                <option value="experts">Experts</option>
+                                                <option value="decision_makers">Decision Makers</option>
+                                                <option value="technical_teams">Technical Teams</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bulkBrandVoice">Brand Voice</label>
+                                            <select id="bulkBrandVoice" name="brand_voice">
+                                                <option value="professional">Professional</option>
+                                                <option value="conversational">Conversational</option>
+                                                <option value="authoritative">Authoritative</option>
+                                                <option value="friendly">Friendly</option>
+                                                <option value="technical">Technical</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bulkCompetitorInsights">Competitor Analysis (optional)</label>
+                                        <textarea id="bulkCompetitorInsights" name="competitor_insights" rows="2" placeholder="Key insights about competitor content or market gaps..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-lightbulb"></i>
+                                    Start Brainstorming
+                                </button>
+                            </form>
+                            <div id="bulkBrainstormResults" class="bulk-results">
+                                <!-- Brainstorm results will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Review -->
+                        <div id="step-2" class="pipeline-step">
+                            <div class="content-form">
+                                <h3>Review & Modify Article Ideas</h3>
+                                <div id="reviewIdeas" class="review-ideas">
+                                    <!-- Ideas for review will be populated here -->
+                                </div>
+                                <div class="step-actions">
+                                    <button class="btn btn-secondary" onclick="bulk.goToStep(1)">
+                                        <i class="fas fa-arrow-left"></i>
+                                        Back to Brainstorm
+                                    </button>
+                                    <button class="btn btn-primary" onclick="bulk.submitReview()">
+                                        <i class="fas fa-check"></i>
+                                        Approve & Continue
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Generate -->
+                        <div id="step-3" class="pipeline-step">
+                            <div class="content-form">
+                                <h3>Generate Articles</h3>
+                                <div id="generationProgress" class="generation-progress">
+                                    <!-- Generation progress will be shown here -->
+                                </div>
+                                <div class="step-actions">
+                                    <button class="btn btn-secondary" onclick="bulk.goToStep(2)">
+                                        <i class="fas fa-arrow-left"></i>
+                                        Back to Review
+                                    </button>
+                                    <button class="btn btn-success" id="startGeneration" onclick="bulk.startGeneration()">
+                                        <i class="fas fa-play"></i>
+                                        Start Generation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Generation Tab -->
+                    <div id="bulk-direct" class="bulk-tab-content">
+                        <form id="directBulkForm" class="content-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="directTopic">Topic/Industry</label>
+                                    <input type="text" id="directTopic" name="topic" required placeholder="e.g., AI in Healthcare">
+                                </div>
+                                <div class="form-group">
+                                    <label for="directCategory">Category</label>
+                                    <div class="category-input-group">
+                                        <div class="category-search-container">
+                                            <input type="text" id="directCategorySearch" placeholder="Search or enter new category..." 
+                                                   oninput="bulk.filterDirectCategories(this.value)" 
+                                                   onfocus="bulk.showDirectCategoryDropdown()" 
+                                                   onblur="bulk.hideDirectCategoryDropdown()" />
+                                            <div id="directCategoryDropdown" class="category-dropdown" style="display: none;">
+                                                <!-- Dynamic categories will be loaded here -->
+                                            </div>
+                                        </div>
+                                        <select id="directCategorySelect" name="category" style="display: none;">
+                                            <option value="">Loading categories...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="directCount">Number of Articles</label>
+                                    <select id="directCount" name="num_articles">
+                                        <option value="3">3 Articles</option>
+                                        <option value="5" selected>5 Articles</option>
+                                        <option value="10">10 Articles</option>
+                                        <option value="15">15 Articles</option>
+                                        <option value="20">20 Articles</option>
+                                        <option value="30">30 Articles</option>
+                                        <option value="50">50 Articles</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-rocket"></i>
+                                Generate Articles Directly
+                            </button>
+                        </form>
+                        <div id="directBulkResults" class="bulk-results">
+                            <!-- Direct generation results will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Job Management Tab -->
+                    <div id="bulk-jobs" class="bulk-tab-content">
+                        <div class="job-controls">
+                            <div class="job-filters">
+                                <select id="jobStatusFilter" onchange="bulk.filterJobs()">
+                                    <option value="">All Statuses</option>
+                                    <option value="pending_review">⏳ Pending Review</option>
+                                    <option value="reviewed">✅ Reviewed</option>
+                                    <option value="processing">🔄 Processing</option>
+                                    <option value="completed">✅ Completed</option>
+                                    <option value="failed">❌ Failed</option>
+                                    <option value="cancelled">🚫 Cancelled</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="bulk.refreshJobs()">
+                                    <i class="fas fa-sync"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Pending Review Jobs Section -->
+                        <div id="pendingReviewSection" class="pending-review-section" style="display: none;">
+                    <div class="section-header">
+                                <h3><i class="fas fa-clock"></i> Jobs Pending Review</h3>
+                                <p>These jobs have generated ideas and are waiting for your review to proceed.</p>
+                    </div>
+                            <div id="pendingReviewJobs" class="pending-jobs-grid">
+                                <!-- Pending review jobs will be populated here -->
+                            </div>
+                            </div>
+
+                        <div id="jobsList" class="jobs-list">
+                            <!-- Jobs will be populated here -->
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Settings</h2>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>API Configuration</h3>
+                            <div class="setting-item">
+                                <label>API Base URL</label>
+                                <input type="text" id="apiBaseUrl" value="http://localhost:8095">
+                            </div>
+                            <div class="setting-item">
+                                <label>GPT-5 Model</label>
+                                <select id="gptModel">
+                                    <option value="gpt-5-mini" selected>GPT-5 Mini (Cost-Optimized)</option>
+                                    <option value="gpt-5">GPT-5 (Main Model)</option>
+                                    <option value="gpt-5-nano">GPT-5 Nano (High-Throughput)</option>
+                                    <option value="gpt-5-chat-latest">GPT-5 Chat Latest</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3>AI Model Parameters</h3>
+                            <div class="setting-item">
+                                <label>Reasoning Effort</label>
+                                <select id="effortLevel">
+                                    <option value="minimal">Minimal (Fastest)</option>
+                                    <option value="low">Low (Fast)</option>
+                                    <option value="medium" selected>Medium (Balanced)</option>
+                                    <option value="high">High (Best Quality)</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Response Verbosity</label>
+                                <select id="verbosityLevel">
+                                    <option value="low">Low (Concise)</option>
+                                    <option value="medium" selected>Medium (Standard)</option>
+                                    <option value="high">High (Detailed)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3>Content Settings</h3>
+                            <div class="setting-item">
+                                <label>Default Author</label>
+                                <input type="text" id="defaultAuthor" value="Upscend Team">
+                            </div>
+                            <div class="setting-item">
+                                <label>Auto-publish</label>
+                                <input type="checkbox" id="autoPublish">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="saveSettings" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Settings
+                    </button>
+                </section>
+
+        <!-- Duplicate sections removed - keeping only the main Create Content section -->
+
+
+                <!-- SEO Tools Section -->
+                <section id="optimization-section" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-search"></i> SEO Tools</h2>
+                        <p>Optimize your content for search engines</p>
+                    </div>
+                    
+                    <div class="seo-tools-grid">
+                        <div class="seo-tool-card">
+                            <h3>Keyword Analysis</h3>
+                            <div class="tool-form">
+                                <input type="text" id="keywordInput" placeholder="Enter keyword to analyze">
+                                <button class="btn btn-primary" onclick="seo.analyzeKeyword()">
+                                    <i class="fas fa-search"></i> Analyze
+                                </button>
+                            </div>
+                            <div id="keywordResults" class="tool-results"></div>
+                        </div>
+                        
+                        <div class="seo-tool-card">
+                            <h3>Content Optimization</h3>
+                            <div class="tool-form">
+                                <textarea id="contentInput" placeholder="Paste content to optimize"></textarea>
+                                <button class="btn btn-primary" onclick="seo.optimizeContent()">
+                                    <i class="fas fa-magic"></i> Optimize
+                                </button>
+                            </div>
+                            <div id="optimizationResults" class="tool-results"></div>
+                        </div>
+                        
+                        <div class="seo-tool-card">
+                            <h3>Competitor Analysis</h3>
+                            <div class="tool-form">
+                                <input type="url" id="competitorUrl" placeholder="Enter competitor URL">
+                                <button class="btn btn-primary" onclick="seo.analyzeCompetitor()">
+                                    <i class="fas fa-chart-line"></i> Analyze
+                                </button>
+                            </div>
+                            <div id="competitorResults" class="tool-results"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Workflow Management Section -->
+                <section id="workflow-section" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tasks"></i> Workflow Management</h2>
+                        <p>Manage content approval and publishing workflows</p>
+                    </div>
+                    
+                    <div class="workflow-tabs">
+                        <button class="tab-btn active" data-tab="pending">Pending Review</button>
+                        <button class="tab-btn" data-tab="approved">Approved</button>
+                        <button class="tab-btn" data-tab="rejected">Rejected</button>
+                    </div>
+                    
+                    <div class="workflow-content">
+                        <div id="pending-tab" class="tab-content active">
+                            <div class="workflow-list" id="pendingWorkflowList">
+                                <!-- Pending items will be loaded here -->
+                            </div>
+                        </div>
+                        <div id="approved-tab" class="tab-content">
+                            <div class="workflow-list" id="approvedWorkflowList">
+                                <!-- Approved items will be loaded here -->
+                            </div>
+                        </div>
+                        <div id="rejected-tab" class="tab-content">
+                            <div class="workflow-list" id="rejectedWorkflowList">
+                                <!-- Rejected items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Team Collaboration Section -->
+                <section id="team-section" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users"></i> Team Collaboration</h2>
+                        <p>Manage team members and collaboration</p>
+                    </div>
+                    
+                    <div class="team-grid">
+                        <div class="team-card">
+                            <h3>Team Members</h3>
+                            <div class="team-list" id="teamMembersList">
+                                <!-- Team members will be loaded here -->
+                            </div>
+                            <button class="btn btn-primary" onclick="team.showAddMemberModal()">
+                                <i class="fas fa-user-plus"></i> Add Member
+                            </button>
+                        </div>
+                        
+                        <div class="team-card">
+                            <h3>Recent Collaborations</h3>
+                            <div class="collaboration-list" id="collaborationList">
+                                <!-- Collaborations will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="team-card">
+                            <h3>Content Assignments</h3>
+                            <div class="assignments-list" id="assignmentsList">
+                                <!-- Assignments will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Insights Section -->
+                <section id="insights-section" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-brain"></i> AI Insights</h2>
+                        <p>AI-powered insights and recommendations</p>
+                    </div>
+                    
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h3>Content Recommendations</h3>
+                            <div id="contentRecommendations" class="insight-content">
+                                <!-- Recommendations will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="insight-card">
+                            <h3>Trending Topics</h3>
+                            <div id="trendingTopics" class="insight-content">
+                                <!-- Trending topics will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="insight-card">
+                            <h3>Performance Insights</h3>
+                            <div id="performanceInsights" class="insight-content">
+                                <!-- Performance insights will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="insight-card">
+                            <h3>SEO Opportunities</h3>
+                            <div id="seoOpportunities" class="insight-content">
+                                <!-- SEO opportunities will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Content Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
