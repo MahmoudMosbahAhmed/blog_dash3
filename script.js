@@ -1,6 +1,6 @@
 // Global Configuration
 const CONFIG = {
-    API_BASE_URL: 'https://dev-blog-api.upscend.com',
+    API_BASE_URL: 'https://dev-blog.upscend.com',
     // API_BASE_URL: 'http://localhost:8095',
     CREDENTIALS: {
         username: 'admin',
@@ -7309,4 +7309,5 @@ window.navigation = navigation;
 window.contentCreator = contentCreator;
 window.contentEditor = contentEditor;
 window.seoHelper = seoHelper;
+
 window.seoHelper = seoHelper;
